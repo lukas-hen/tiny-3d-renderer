@@ -2,7 +2,7 @@
 
 This repository contains a minimal (and naive) C program drawing and animating a rotating 3D wireframe cube using [SDL2](https://www.libsdl.org/).
 
-![Cube](./images/output.gif)
+![Cube](./images/output.gif){ .image25percent }
 
 ## Installation
 
