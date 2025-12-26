@@ -6,7 +6,6 @@ This repository contains a minimal (and naive) C program drawing and animating a
   <img src="./images/output.gif" alt="Cube" style="width:70%; height:auto;">
 </p>
 
-
 ## Installation
 
 ### Prerequisites

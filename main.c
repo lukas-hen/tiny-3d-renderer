@@ -13,7 +13,6 @@
 #define GREEN(rgba) (rgba >> 16 & (uint8_t) 0xff)
 #define RED(rgba)   (rgba >> 24 & (uint8_t) 0xff)
 
-
 typedef struct Vertex {
     float x;
     float y;
@@ -74,7 +73,6 @@ int main(void) {
     SDL_Event event;
     SDL_Renderer *renderer;
     SDL_Window *window;
-    int i;
     float dt = 0;
 
     size_t n_vertices = sizeof(Object)/sizeof(Vertex);
