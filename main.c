@@ -1,11 +1,13 @@
+#define _POSIX_C_SOURCE 199309L
+
 #include <stdlib.h>
 #include <stdint.h>
 #include <SDL2/SDL.h>
+#include <time.h>
 #include <unistd.h>
 #include <math.h>
 
 #define WINDOW_WIDTH 800
-#define FPS 60
 #define PI 3.1415926f
 
 #define ALPHA(rgba) (rgba >> 0  & (uint8_t) 0xff)
@@ -27,6 +29,7 @@ void normal_grid_to_raster(Vertex *v);
 void rotate_x(Vertex *v, float theta);
 void rotate_y(Vertex *v, float theta);
 void rotate_z(Vertex *v, float theta);
+double diff_timespec(const struct timespec *time1, const struct timespec *time0);
 
 const Vertex Object[] = {    
     // Front face
@@ -66,6 +69,10 @@ const uint32_t VertexColors[] = {
     0x34ebaeff,
     0xffffffff,
     0xed66d2ff,
+    0xed66d2ff,
+    0xed00d2ff,
+    0xff66e3ff,
+    0x0033f0ff,
 };
 
 int main(void) {
@@ -73,7 +80,10 @@ int main(void) {
     SDL_Event event;
     SDL_Renderer *renderer;
     SDL_Window *window;
+    char *window_title = malloc(sizeof(char)*40); // "Renderer - 0000000 fps"
     float dt = 0;
+
+    struct timespec t1, t2;
 
     size_t n_vertices = sizeof(Object)/sizeof(Vertex);
     size_t n_edges = sizeof(EdgeBuffer)/sizeof(EdgeBuffer[0]);
@@ -81,6 +91,8 @@ int main(void) {
 
     SDL_Init(SDL_INIT_VIDEO);
     SDL_CreateWindowAndRenderer(WINDOW_WIDTH, WINDOW_WIDTH, 0, &window, &renderer);
+
+    clock_gettime(CLOCK_MONOTONIC, &t1);
 
     while (1) {
 
@@ -114,14 +126,26 @@ int main(void) {
 
         SDL_RenderPresent(renderer);
         
-        dt += PI/(FPS*8); // One spin per 8s.
+        clock_gettime(CLOCK_MONOTONIC, &t2);
+        double elapsed_seconds = diff_timespec(&t2, &t1);
+        if (elapsed_seconds <= 0)
+            continue;
 
-        sleep(1/FPS);
+        dt += 2*elapsed_seconds; // 1 period per 2s.
+
+        sprintf(window_title, "Renderer - %lf fps", 1.0/elapsed_seconds);
+        SDL_SetWindowTitle(window, window_title);
+
+        clock_gettime(CLOCK_MONOTONIC, &t1);
+
     }
 
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
+    
+    free(window_title);
+
     return EXIT_SUCCESS;
 }
 
@@ -183,4 +207,8 @@ void rotate_x(Vertex *v, float theta) {
 
     v->y = cosf(theta)*y - sinf(theta)*z;
     v->z = sinf(theta)*y + cosf(theta)*z;
+}
+
+double diff_timespec(const struct timespec *time1, const struct timespec *time0) {
+    return (time1->tv_sec - time0->tv_sec) + (time1->tv_nsec - time0->tv_nsec) / 1000000000.0;
 }
