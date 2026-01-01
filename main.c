@@ -80,7 +80,7 @@ int main(void) {
     SDL_Event event;
     SDL_Renderer *renderer;
     SDL_Window *window;
-    char *window_title = malloc(sizeof(char)*40); // "Renderer - 0000000 fps"
+    char *window_title = malloc(sizeof(char)*30); // "Renderer - 0000000 fps"
     float dt = 0;
 
     struct timespec t1, t2;
@@ -133,7 +133,7 @@ int main(void) {
 
         dt += 2*elapsed_seconds; // 1 period per 2s.
 
-        sprintf(window_title, "Renderer - %lf fps", 1.0/elapsed_seconds);
+        sprintf(window_title, "Renderer - %2.2lf fps", 1.0/elapsed_seconds);
         SDL_SetWindowTitle(window, window_title);
 
         clock_gettime(CLOCK_MONOTONIC, &t1);
